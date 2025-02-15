@@ -9,10 +9,9 @@ CF_API_TOKEN    =   os.environ["CF_API_TOKEN"]
 CF_ZONE_ID      =   os.environ["CF_ZONE_ID"]
 CF_DNS_NAME     =   os.environ["CF_DNS_NAME"]
 
-# pushplus_token
-PUSHPLUS_TOKEN  =   os.environ["PUSHPLUS_TOKEN"]
-
-
+# Telegram bot token and chat ID
+TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
 headers = {
     'Authorization': f'Bearer {CF_API_TOKEN}',
@@ -69,19 +68,17 @@ def update_dns_record(record_id, name, cf_ip):
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         return "ip:" + str(cf_ip) + "解析" + str(name) + "失败"
 
-# 消息推送
-def push_plus(content):
-    url = 'http://www.pushplus.plus/send'
+# Telegram message push
+def send_telegram_message(content):
+    url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
     data = {
-        "token": PUSHPLUS_TOKEN,
-        "title": "IP优选DNSCF推送",
-        "content": content,
-        "template": "markdown",
-        "channel": "wechat"
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': content,
+        'parse_mode': 'Markdown'
     }
-    body = json.dumps(data).encode(encoding='utf-8')
-    headers = {'Content-Type': 'application/json'}
-    requests.post(url, data=body, headers=headers)
+    response = requests.post(url, data=data)
+    if response.status_code != 200:
+        print(f"Error sending message to Telegram: {response.text}")
 
 # 主函数
 def main():
@@ -89,14 +86,14 @@ def main():
     ip_addresses_str = get_cf_speed_test_ip()
     ip_addresses = ip_addresses_str.split(',')
     dns_records = get_dns_records(CF_DNS_NAME)
-    push_plus_content = []
+    push_telegram_content = []
     # 遍历 IP 地址列表
     for index, ip_address in enumerate(ip_addresses):
         # 执行 DNS 变更
         dns = update_dns_record(dns_records[index], CF_DNS_NAME, ip_address)
-        push_plus_content.append(dns)
+        push_telegram_content.append(dns)
 
-    push_plus('\n'.join(push_plus_content))
+    send_telegram_message('\n'.join(push_telegram_content))
 
 if __name__ == '__main__':
     main()
