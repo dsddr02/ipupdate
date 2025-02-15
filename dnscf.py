@@ -70,10 +70,13 @@ def update_dns_record(record_id, name, cf_ip):
 
 # Telegram message push
 def send_telegram_message(content):
+    # Add spoiler to the content
+    spoiler_content = "||" + content + "||"
+    
     url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
     data = {
         'chat_id': TELEGRAM_CHAT_ID,
-        'text': content,
+        'text': spoiler_content,
         'parse_mode': 'Markdown'
     }
     response = requests.post(url, data=data)
