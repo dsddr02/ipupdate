@@ -4,6 +4,7 @@ import time
 import os
 import json
 import re
+import requests
 # API 密钥
 CF_API_TOKEN    =   os.environ["CF_API_TOKEN"]
 CF_ZONE_ID      =   os.environ["CF_ZONE_ID"]
@@ -72,26 +73,29 @@ def update_dns_record(record_id, name, cf_ip):
 def escape_markdown_v2(text):
     # 转义 Markdown v2 特殊字符（包括点号 .）
     escape_chars = r"\\\*_{}[]()#+-.!`"  # 加入点号 . 
+
     # 使用正则表达式，将所有特殊字符前加上反斜杠
-    return re.sub(r'([{}])'.format(escape_chars), r'\\\1', text)
+    return re.sub(r'([{}])'.format(re.escape(escape_chars)), r'\\\1', text)
 
 def send_telegram_message(content):
     # 转义特殊字符
     escaped_content = escape_markdown_v2(content)
-    
+
     # 替换文本中的换行符为 Markdown v2 支持的换行方式
     content_with_line_breaks = escaped_content.replace("\n", "  \n")  # 用 "  \n" 实现换行
-    
+
     # 添加剧透效果
     spoiler_content = "||" + content_with_line_breaks + "||"
-    
+
     url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
     data = {
         'chat_id': TELEGRAM_CHAT_ID,
         'text': spoiler_content,
         'parse_mode': 'MarkdownV2'  # 使用 MarkdownV2
     }
+    
     response = requests.post(url, data=data)
+    
     if response.status_code != 200:
         print(f"发送消息到 Telegram 时发生错误: {response.text}")
 
