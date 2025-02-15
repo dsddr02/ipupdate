@@ -109,7 +109,8 @@ def main():
     # 遍历 IP 地址列表
     for index, ip_address in enumerate(ip_addresses):
         # 执行 DNS 变更
-        dns = update_dns_record(dns_records[0], CF_DNS_NAME, ip_address)
+        dns = update_dns_record(dns_records[0], CF_DNS_NAME, ip_addresses[0])
+
         push_telegram_content.append(dns)
 
     send_telegram_message('\n'.join(push_telegram_content))
