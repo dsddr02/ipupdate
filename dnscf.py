@@ -70,18 +70,21 @@ def update_dns_record(record_id, name, cf_ip):
 
 # Telegram message push
 def send_telegram_message(content):
-    # Add spoiler to the content
-    spoiler_content = "||" + content + "||"
+    # 替换文本中的换行符为 Markdown v2 支持的换行方式
+    content_with_line_breaks = content.replace("\n", "  \n")  # 用 "  \n" 实现换行
+    
+    # 添加剧透效果
+    spoiler_content = "||" + content_with_line_breaks + "||"
     
     url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
     data = {
         'chat_id': TELEGRAM_CHAT_ID,
         'text': spoiler_content,
-        'parse_mode': 'Markdown'
+        'parse_mode': 'MarkdownV2'  # 使用 MarkdownV2
     }
     response = requests.post(url, data=data)
     if response.status_code != 200:
-        print(f"Error sending message to Telegram: {response.text}")
+        print(f"发送消息到 Telegram 时发生错误: {response.text}")
 
 # 主函数
 def main():
