@@ -1,9 +1,9 @@
-name: 'dns_pod_push'
+name: 'cc'
 
 on:
   schedule:
     - cron: '38 23 * * *'
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
