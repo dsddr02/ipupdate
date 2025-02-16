@@ -2,7 +2,7 @@ name: 'dns_pod_push'
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '38 23 * * *'
 
 jobs:
   build:
@@ -10,17 +10,12 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
-      - name: 'Set up Python'
-        uses: actions/setup-python@v4
+      - name: Clean up Workflow Runs
+        uses: Mattraks/delete-workflow-runs@v2
         with:
-          python-version: 3.12
-      - name: 'Install dependencies'
-        run: if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: 'run dnspod'
-        env:
-          DOMAIN: ${{ secrets.DOMAIN }}
-          SUB_DOMAIN: ${{ secrets.SUB_DOMAIN }}
-          SECRETID: ${{ secrets.SECRETID }}
-          SECRETKEY: ${{ secrets.SECRETKEY }}
-          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
-        run: python dnspod.py
+         #token: ${{ secrets.GITHUB_TOKEN }}
+         token: ${{ github.token }}
+         
+         repository: ${{ github.repository }}
+         retain_days: 1
+         keep_minimum_runs: 3
