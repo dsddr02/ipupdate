@@ -1,123 +1,87 @@
-import requests
-import traceback
-import time
 import os
-import json
-import re
 import requests
-# API 密钥
-CF_API_TOKEN    =   os.environ["CF_API_TOKEN"]
-CF_ZONE_ID      =   os.environ["CF_ZONE_ID"]
-CF_DNS_NAME     =   os.environ["CF_DNS_NAME"]
+import re
 
-# Telegram bot token and chat ID
-TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
-
-headers = {
-    'Authorization': f'Bearer {CF_API_TOKEN}',
-    'Content-Type': 'application/json'
-}
-
-def get_cf_speed_test_ip(timeout=10, max_retries=5):
-    for attempt in range(max_retries):
-        try:
-            # 发送 GET 请求，设置超时
-            response = requests.get('https://ip.164746.xyz/ipTop.html', timeout=timeout)
-            # 检查响应状态码
-            if response.status_code == 200:
-                return response.text
-        except Exception as e:
-            traceback.print_exc()
-            print(f"get_cf_speed_test_ip Request failed (attempt {attempt + 1}/{max_retries}): {e}")
-    # 如果所有尝试都失败，返回 None 或者抛出异常，根据需要进行处理
-    return None
-
-# 获取 DNS 记录
-def get_dns_records(name):
-    def_info = []
-    url = f'https://api.cloudflare.com/client/v4/zones/{CF_ZONE_ID}/dns_records'
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        records = response.json()['result']
-        for record in records:
-            if record['name'] == name:
-                def_info.append(record['id'])
-        return def_info
-    else:
-        print('Error fetching DNS records:', response.text)
-
-# 更新 DNS 记录
-def update_dns_record(record_id, name, cf_ip):
-    url = f'https://api.cloudflare.com/client/v4/zones/{CF_ZONE_ID}/dns_records/{record_id}'
-    data = {
-        'type': 'A',
-        'name': name,
-        'content': cf_ip,
-        'ttl': 60
-    }
-
-    response = requests.put(url, headers=headers, json=data)
-
-    if response.status_code == 200:
-        print(f"cf_dns_change success: ---- Time: " + str(
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + " ---- ip：" + str(cf_ip))
-        return "ip:" + str(cf_ip) + "解析" + str(name) + "成功"
-    else:
-        traceback.print_exc()
-        print(f"cf_dns_change ERROR: ---- Time: " + str(
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        return "ip:" + str(cf_ip) + "解析" + str(name) + "失败"
-
-# Telegram message push
 def escape_markdown_v2(text):
-    # 转义 Markdown v2 特殊字符（包括点号 .）
-    escape_chars = r"\\\*_{}[]()#+-.!`"  # 加入点号 . 
-
-    # 使用正则表达式，将所有特殊字符前加上反斜杠
-    return re.sub(r'([{}])'.format(re.escape(escape_chars)), r'\\\1', text)
+    """转义 Telegram MarkdownV2 特殊字符"""
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return ''.join(f'\\{char}' if char in escape_chars else char for char in text)
 
 def send_telegram_message(content):
-    # 转义特殊字符
+    """发送 Telegram 消息，支持 MarkdownV2 格式"""
     escaped_content = escape_markdown_v2(content)
-
-    # 替换文本中的换行符为 Markdown v2 支持的换行方式
-    content_with_line_breaks = escaped_content.replace("\n", "  \n")  # 用 "  \n" 实现换行
-
-    # 添加剧透效果
-    spoiler_content = "||" + content_with_line_breaks + "||"
-
+    content_with_line_breaks = escaped_content.replace("\n", "  \n")  # MarkdownV2 换行
+    spoiler_content = f'||{content_with_line_breaks}||'  # 添加剧透效果
     url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
     data = {
         'chat_id': TELEGRAM_CHAT_ID,
         'text': spoiler_content,
-        'parse_mode': 'MarkdownV2'  # 使用 MarkdownV2
+        'parse_mode': 'MarkdownV2'
     }
-    
     response = requests.post(url, data=data)
-    
     if response.status_code != 200:
         print(f"发送消息到 Telegram 时发生错误: {response.text}")
 
-# 主函数
-def main():
-    # 获取最新优选IP
-    ip_addresses_str = get_cf_speed_test_ip()
-    ip_addresses = ip_addresses_str.split(',')
-    
-    # 获取 DNS 记录
-    dns_records = get_dns_records(CF_DNS_NAME)
-    
-    push_telegram_content = []
-    
-    # 仅处理第一组数据
-    if ip_addresses and dns_records:
-        # 执行 DNS 变更，仅处理第一组数据
-        dns = update_dns_record(dns_records[0], CF_DNS_NAME, ip_addresses[0])
-        push_telegram_content.append(dns)
-    
-    # 发送 Telegram 消息
-    send_telegram_message('\n'.join(push_telegram_content))
+# 获取 GitHub Secrets
+api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
+zone_id = os.environ.get("CF_ZONE_ID")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+name = "yx1"
+ipdb_api_url = "https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/bestcf.txt"
 
-if __name__ == '__main__':
-    main()
+headers = {
+    "Authorization": f"Bearer {api_token}",
+    "Content-Type": "application/json",
+}
+
+def delete_dns_record(record_id):
+    try:
+        delete_url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{record_id}"
+        response = requests.delete(delete_url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(f"Failed to delete DNS record with ID {record_id}: {response.text}")
+        send_telegram_message(f"成功删除 DNS 记录: {record_id}")
+    except Exception as e:
+        print(f"Exception occurred while deleting DNS record with ID {record_id}: {str(e)}")
+
+
+def create_dns_record(ip):
+    try:
+        create_url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records"
+        create_data = {
+            "type": "A",
+            "name": name,
+            "content": ip,
+            "ttl": 60,
+            "proxied": False,
+        }
+        response = requests.post(create_url, headers=headers, json=create_data)
+        if response.status_code != 200:
+            raise Exception(f"Failed to create DNS record for IP {ip}: {response.text}")
+        send_telegram_message(f"成功创建 DNS 记录: {name} -> {ip}")
+    except Exception as e:
+        print(f"Exception occurred while creating DNS record for IP {ip}: {str(e)}")
+
+try:
+    url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records"
+    response = requests.get(url, headers=headers)
+    data = response.json()
+
+    for record in data.get("result", []):
+        record_name = record.get("name", "")
+        if re.search(name, record_name):
+            delete_dns_record(record["id"])
+    
+    print(f"Successfully deleted records with name {name}, updating DNS records now")
+    send_telegram_message(f"成功删除 {name} 旧的 DNS 记录，准备更新新的 IP 地址")
+
+    ipdb_response = requests.get(ipdb_api_url)
+    new_ip_list = ipdb_response.text.strip().split("\n")
+
+    if new_ip_list:
+        first_ip = new_ip_list[0]
+        create_dns_record(first_ip)
+        print(f"Successfully updated {name} DNS records")
+except Exception as e:
+    print(f"Exception occurred: {str(e)}")
