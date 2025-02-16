@@ -5,8 +5,8 @@ import re
 # Get GitHub Secrets from environment variables
 api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
 zone_id = os.environ.get("CLOUDFLARE_ZONE_ID")
-name = "bestcf"
-ipdb_api_url = "https://ipdb.api.030101.xyz/?type=bestcf"
+name = "yx1"
+ipdb_api_url = "https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/bestcf.txt"
 
 headers = {
     "Authorization": f"Bearer {api_token}",
