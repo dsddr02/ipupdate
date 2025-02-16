@@ -44,21 +44,20 @@ try:
     data = response.json()
 
     for record in data.get("result", []):
-        record_name = record["name"]
+        record_name = record.get("name", "")
         if re.search(name, record_name):
             delete_dns_record(record["id"])
 
     print(f"Successfully deleted records with name {name}, updating DNS records now")
 
-ipdb_response = requests.get(ipdb_api_url)
-new_ip_list = ipdb_response.text.strip().split("\n")
+    ipdb_response = requests.get(ipdb_api_url)
+    new_ip_list = ipdb_response.text.strip().split("\n")
 
-# 只获取第一组数据
-if new_ip_list:
-    first_ip = new_ip_list[0]
-    create_dns_record(first_ip)
+    # 只获取第一组数据
+    if new_ip_list:
+        first_ip = new_ip_list[0]
+        create_dns_record(first_ip)
+        print(f"Successfully updated {name} DNS records")
 
-
-    print(f"Successfully updated {name} DNS records")
 except Exception as e:
     print(f"Exception occurred: {str(e)}")
