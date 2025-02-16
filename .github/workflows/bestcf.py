@@ -41,7 +41,7 @@ def delete_dns_record(record_id):
         response = requests.delete(delete_url, headers=headers)
         if response.status_code != 200:
             raise Exception(f"Failed to delete DNS record with ID {record_id}: {response.text}")
-        send_telegram_message(f"成功删除 DNS 记录: {record_id}")
+       # send_telegram_message(f"成功删除 DNS 记录: {record_id}")
     except Exception as e:
         print(f"Exception occurred while deleting DNS record with ID {record_id}: {str(e)}")
 
@@ -59,7 +59,7 @@ def create_dns_record(ip):
         response = requests.post(create_url, headers=headers, json=create_data)
         if response.status_code != 200:
             raise Exception(f"Failed to create DNS record for IP {ip}: {response.text}")
-        send_telegram_message(f"成功创建 DNS 记录: {name} -> {ip}")
+        send_telegram_message(f"成功创建 DNS 记录: {name} ip:{ip}")
     except Exception as e:
         print(f"Exception occurred while creating DNS record for IP {ip}: {str(e)}")
 
@@ -74,7 +74,7 @@ try:
             delete_dns_record(record["id"])
     
     print(f"Successfully deleted records with name {name}, updating DNS records now")
-    send_telegram_message(f"成功删除 {name} 旧的 DNS 记录，准备更新新的 IP 地址")
+  #  send_telegram_message(f"成功删除 {name} 旧的 DNS 记录，准备更新新的 IP 地址")
 
     ipdb_response = requests.get(ipdb_api_url)
     new_ip_list = ipdb_response.text.strip().split("\n")
