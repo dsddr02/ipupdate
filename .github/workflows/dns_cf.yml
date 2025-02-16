@@ -26,9 +26,11 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python dnscf.py
       - name: Clean up Workflow Runs
-        uses: Mattraks/delete-workflow-runs@v2.0.6
+        uses: Mattraks/delete-workflow-runs@v2
         with:
-         token: ${{ secrets.GITHUB_TOKEN }}
+         #token: ${{ secrets.GITHUB_TOKEN }}
+         token: ${{ github.token }}
+         
          repository: ${{ github.repository }}
          retain_days: 1
-         keep_minimum_runs: 0
+         keep_minimum_runs: 3
