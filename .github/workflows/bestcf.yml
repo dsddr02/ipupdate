@@ -1,7 +1,8 @@
 name: BestCF
 
 on:
-
+  schedule:
+    - cron: '24 */3 * * *'
   workflow_dispatch:
 
 jobs:
@@ -28,3 +29,12 @@ jobs:
       env:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+    - name: Clean up Workflow Runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+         #token: ${{ secrets.GITHUB_TOKEN }}
+         token: ${{ github.token }}
+         
+         repository: ${{ github.repository }}
+         retain_days: 1
+         keep_minimum_runs: 3
