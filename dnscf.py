@@ -104,15 +104,19 @@ def main():
     # 获取最新优选IP
     ip_addresses_str = get_cf_speed_test_ip()
     ip_addresses = ip_addresses_str.split(',')
+    
+    # 获取 DNS 记录
     dns_records = get_dns_records(CF_DNS_NAME)
+    
     push_telegram_content = []
-    # 遍历 IP 地址列表
-    for index, ip_address in enumerate(ip_addresses):
-        # 执行 DNS 变更
+    
+    # 仅处理第一组数据
+    if ip_addresses and dns_records:
+        # 执行 DNS 变更，仅处理第一组数据
         dns = update_dns_record(dns_records[0], CF_DNS_NAME, ip_addresses[0])
-
         push_telegram_content.append(dns)
-
+    
+    # 发送 Telegram 消息
     send_telegram_message('\n'.join(push_telegram_content))
 
 if __name__ == '__main__':
