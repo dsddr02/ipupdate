@@ -2,7 +2,7 @@ name: 'cc'
 
 on:
   schedule:
-    - cron: '38 23 * * *'
+    - cron: '38 23 */2 * *'
   workflow_dispatch:
 jobs:
   build:
