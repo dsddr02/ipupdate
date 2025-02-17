@@ -2,7 +2,7 @@ name: BestCF
 
 on:
   schedule:
-    - cron: "38 2-23/1 * * *"
+    - cron: "38 2-23/5 * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,10 +13,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
+   # - name: Set up Python
+    #  uses: actions/setup-python@v4
+    #  with:
+     #   python-version: 3.8
 
     - name: Install Dependencies
       run: |
