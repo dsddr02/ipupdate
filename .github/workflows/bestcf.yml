@@ -2,7 +2,7 @@ name: BestCF
 
 on:
   schedule:
-    - cron: "8 2-23/1 * * *"
+    - cron: "8 2-23/13 * * *"
   workflow_dispatch:
 
 jobs:
