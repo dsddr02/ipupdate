@@ -1,4 +1,4 @@
-name: Update List
+name: test
 
 on:
   schedule:
