@@ -14,7 +14,7 @@ ips = ip_pattern.findall(response.text)
 ips = sorted(set(ips))
 
 # 保存到 txt 文件
-with open("ips.txt", "w") as f:
+with open("ip.txt", "w") as f:
     f.write("\n".join(ips))
 
 print(f"共提取 {len(ips)} 个 IP 地址，并已保存到 ips.txt 文件。")
