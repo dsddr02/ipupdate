@@ -25,24 +25,28 @@ time.sleep(5)  # 等待5秒，确保数据加载完成
 # 获取表格
 table = driver.find_element(By.ID, "csvTable")
 
-# 提取表格中的 IP 地址（假设 IP 地址在第二列）
+# 提取表格中的 IP 地址（假设 IP 地址在第一列，第三列为数值列）
 ip_addresses = []
 rows = table.find_elements(By.TAG_NAME, "tr")
 
 # 遍历表格行并提取 IP 地址
 for row in rows[1:]:  # 跳过表头
     cols = row.find_elements(By.TAG_NAME, "td")
-    if len(cols) > 1:  # 确保该行有数据
-        ip = cols[0].text.strip()  # 假设 IP 地址在第二列
-        ip_addresses.append(ip)
+    if len(cols) > 2:  # 确保该行有数据
+        ip = cols[0].text.strip()  # IP 地址在第一列
+        third_column_value = cols[2].text.strip()  # 获取第三列数值
 
-# 保存 IP 地址到文件
+        # 如果第三列的值为 0.00，写入该 IP 地址
+        if third_column_value == "0.00":
+            ip_addresses.append(ip)
+
+# 保存符合条件的 IP 地址到文件
 with open("prox.txt", "w") as f:
     for ip in ip_addresses:
         f.write(ip + "\n")
 
 # 打印提示信息
-print("IP 地址已保存到 prox.txt")
+print("符合条件的 IP 地址已保存到 prox.txt")
 
 # 关闭浏览器
 driver.quit()
