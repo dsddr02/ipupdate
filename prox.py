@@ -32,9 +32,9 @@ rows = table.find_elements(By.TAG_NAME, "tr")
 # 遍历表格行并提取 IP 地址
 for row in rows[1:]:  # 跳过表头
     cols = row.find_elements(By.TAG_NAME, "td")
-    if len(cols) > 2:  # 确保该行有数据
+    if len(cols) > 3:  # 确保该行有数据
         ip = cols[0].text.strip()  # IP 地址在第一列
-        third_column_value = cols[2].text.strip()  # 获取第三列数值
+        third_column_value = cols[3].text.strip()  # 获取第三列数值
 
         # 如果第三列的值为 0.00，写入该 IP 地址
         if third_column_value == "0.00":
