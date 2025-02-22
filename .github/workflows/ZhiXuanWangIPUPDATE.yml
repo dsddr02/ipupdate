@@ -1,5 +1,4 @@
-name: test
-
+name: ZhiXuanWangIPUPDATE
 on:
   schedule:
     - cron: '37 */2 * * *' # 每3小时运行一次
