@@ -16,7 +16,7 @@ if response.status_code == 200:
         if len(cells) >= 2:  # 确保有至少两列数据（IP和速度）
             ip = cells[0].text.strip()
             speed = cells[1].text.strip()
-            if speed != '0':  # 筛选速度不为0的IP
+            if speed != '0.00MB/s':  # 筛选速度不为0的IP
                 valid_ips.append(ip)
 
     # 将有效的IP地址写入txt文件
