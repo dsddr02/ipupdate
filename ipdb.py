@@ -37,7 +37,7 @@ for row in rows[1:]:  # 跳过表头
         ip_addresses.append(ip)
 
 # 保存 IP 地址到文件
-with open("ip_addresses.txt", "w") as f:
+with open("ip.txt", "w") as f:
     for ip in ip_addresses:
         f.write(ip + "\n")
 
