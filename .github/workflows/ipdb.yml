@@ -26,7 +26,7 @@ jobs:
 
         
     - name: Run script
-      run: python ${{ github.workspace }}/cm.py
+      run: python ${{ github.workspace }}/ipdb.py
     - name: Commit changes
       run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
