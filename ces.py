@@ -37,7 +37,7 @@ except Exception as e:
     print(Fore.RED + f"Error occurred: {e}" + Style.RESET_ALL)
 
 # 将IP列表直接保存到CSV文件
-with open('ip_list.csv', 'w', newline='') as csvfile:
+with open('ip.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["IP Address"])  # 写入表头
     for ip in ip_list:
