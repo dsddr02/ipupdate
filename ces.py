@@ -27,7 +27,7 @@ try:
     # 获取IP和端口
     for i in range(1, 51):  # 假设最多获取50个IP
         ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
-      #  port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
+        port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
         
         if ip:
             # 如果端口是SOCKS类型的代理，则跳过
