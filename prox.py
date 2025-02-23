@@ -55,7 +55,7 @@ api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
 zone_id = os.environ.get("CF_ZONE_ID")
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-name = "yx1"
+name = "proxy"
 ipdb_api_url = "https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/bestcf.txt"
 headers = {
     "Authorization": f"Bearer {api_token}",
