@@ -25,7 +25,7 @@ try:
 
     # 获取IP地址，最多获取50个IP
     for i in range(1, 51):
-        ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
+        ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True)
         
         if ip:
             # 去掉端口，只保留IP地址
@@ -38,7 +38,7 @@ except Exception as e:
     print(Fore.RED + f"Error occurred: {e}" + Style.RESET_ALL)
 
 # 保存IP到txt文件
-with open('ip_list.txt', 'w') as txtfile:
+with open('ip_py.txt', 'w') as txtfile:
     for ip in ip_list:
         txtfile.write(f"{ip}\n")  # 每个IP写入新的一行
 
