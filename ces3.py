@@ -1,7 +1,10 @@
 import csv
 import requests
-from bs4 import BeautifulSoup
+from requests_html import HTMLSession
 from colorama import Fore, Style
+
+# 创建HTMLSession对象
+session = HTMLSession()
 
 # 设置目标URL
 url = 'https://www.proxydocker.com/en/proxylist/country/Taiwan'
@@ -12,35 +15,33 @@ headers = {'User-Agent': 'Mozilla/5.0'}
 # 初始化IP列表
 ip_list = []
 
-# 发起请求获取页面内容
+# 开始获取IP地址
 try:
-    r = requests.get(url, headers=headers)
+    # 发起请求
+    r = session.get(url, headers=headers)
     print(f"Status Code: {r.status_code}")
     
-    if r.status_code == 200:
-        # 使用BeautifulSoup解析HTML
-        soup = BeautifulSoup(r.text, 'html.parser')
+    # 渲染网页，确保动态内容加载完毕
+    r.html.render(sleep=2, keep_page=True, scrolldown=1)
+
+    # 获取IP和端口
+    for i in range(1, 51):  # 假设最多获取50个IP
+        ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
+       # port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
         
-        # 找到表格的行数据
-        rows = soup.find_all('tr')
-        for row in rows:
-            cols = row.find_all('td')
-            if len(cols) >= 2:
-                ip = cols[0].text.strip() if cols[0] else None
-                if ip:  # 只保存IP地址
-                    ip_list.append(ip)  # 添加IP地址到列表
+        if ip:
+           
+             ip_list.append(f"{ip}")
     
-    else:
-        print(Fore.RED + "Failed to fetch page!" + Style.RESET_ALL)
+    print(Fore.GREEN + "IP addresses successfully retrieved!" + Style.RESET_ALL)
 
 except Exception as e:
     print(Fore.RED + f"Error occurred: {e}" + Style.RESET_ALL)
 
-# 将IP列表直接保存到CSV文件
 with open('ip.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["IP Address"])  # 写入表头
     for ip in ip_list:
-        writer.writerow([ip])  # 写入每一行IP
+        writer.writerow([ip])  # 写
 
-print(Fore.YELLOW + "IP list has been saved to 'ip_list.csv'." + Style.RESET_ALL)
+print(Fore.YELLOW + "Valid IP list has been completed." + Style.RESET_ALL)
