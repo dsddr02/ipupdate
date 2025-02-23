@@ -55,7 +55,7 @@ api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
 zone_id = os.environ.get("CF_ZONE_ID")
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-name = "proxy"
+name = "yx1"
 ipdb_api_url = "https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/bestcf.txt"
 headers = {
     "Authorization": f"Bearer {api_token}",
@@ -114,7 +114,7 @@ for row in rows[1:]:  # 跳过表头
                 # 创建新的 DNS 记录
                 create_dns_record(first_ip)
                 print(f"成功更新 {name} 的 DNS 记录为 IP: {first_ip}")
-                send_telegram_message(f"成功更新 {name} 的 DNS 记录为 IP: {first_ip}")
+              #  send_telegram_message(f"成功更新 {name} 的 DNS 记录为 IP: {first_ip}")
             except Exception as e:
                 print(f"Exception occurred during DNS record update: {str(e)}")
             driver.quit()
