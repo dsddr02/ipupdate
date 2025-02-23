@@ -23,6 +23,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
         pip install beautifulsoup4      
+        pip install requests-html
+        pip install colorama
+        
 
         
     - name: Run script
