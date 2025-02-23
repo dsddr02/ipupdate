@@ -24,19 +24,14 @@ jobs:
         pip install requests
         pip install beautifulsoup4     
         pip install selenium webdriver-manager
+    - name: BestCF
+      run: |
+        python ${{ github.workspace }}/prox.py
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
         
-    - name: Run script
-      run: python ${{ github.workspace }}/prox.py
-    - name: Commit changes
-      run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add prox.txt
-            git commit -m "Automatic update"
-            git push
-          else
-           echo "No changes detected, skipping commit."
-          fi
-          
+    
