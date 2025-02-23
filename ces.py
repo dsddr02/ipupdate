@@ -6,7 +6,7 @@ from colorama import Fore, Style
 session = HTMLSession()
 
 # 设置目标URL
-url = 'https://www.proxydocker.com/en/proxylist/country/Taiwan'
+url = 'https://www.proxydocker.com/en/proxylist/port/443'
 
 # 请求头
 headers = {'User-Agent': 'Mozilla/5.0'}
