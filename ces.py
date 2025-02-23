@@ -1,7 +1,7 @@
 import csv
 import requests
-import HTMLSession
-import Fore, Style
+from requests_html import HTMLSession
+from colorama import Fore, Style
 
 # 创建HTMLSession对象
 session = HTMLSession()
