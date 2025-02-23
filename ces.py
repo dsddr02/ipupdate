@@ -1,6 +1,6 @@
-from bs4 import BeautifulSoup
-import requests
 import csv
+import requests
+from bs4 import BeautifulSoup
 from colorama import Fore, Style
 
 # 设置目标URL
@@ -27,9 +27,8 @@ try:
             cols = row.find_all('td')
             if len(cols) >= 2:
                 ip = cols[0].text.strip() if cols[0] else None
-                port = cols[1].text.strip() if cols[1] else None
-                if ip and port:
-                    ip_list.append(f"{port.lower()}://{ip}")
+                if ip:  # 只保存IP地址
+                    ip_list.append(ip)  # 添加IP地址到列表
     
     else:
         print(Fore.RED + "Failed to fetch page!" + Style.RESET_ALL)
@@ -37,23 +36,11 @@ try:
 except Exception as e:
     print(Fore.RED + f"Error occurred: {e}" + Style.RESET_ALL)
 
-# 验证获取的IP是否有效
-valid_ip_list = []
-for ip in ip_list:
-    try:
-        # 测试IP是否有效，尝试访问一个网页
-        res = requests.get('https://www.youtube.com/?hl=zh-TW&gl=TW', proxies={'http': ip, 'https': ip}, timeout=5)
-        if res.status_code == 200:
-            valid_ip_list.append(ip)
-            print(Fore.GREEN + 'SUCCESS: ' + ip + Style.RESET_ALL)
-    except requests.RequestException:
-        print(Fore.RED + 'FAIL: ' + ip + Style.RESET_ALL)
-
-# 将有效IP写入CSV文件
-with open('ip.csv', 'w', newline='') as csvfile:
+# 将IP列表直接保存到CSV文件
+with open('ip_list.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(["Proxy"])
-    for ip in valid_ip_list:
-        writer.writerow([ip])
+    writer.writerow(["IP Address"])  # 写入表头
+    for ip in ip_list:
+        writer.writerow([ip])  # 写入每一行IP
 
-print(Fore.YELLOW + "Valid IP list has been completed." + Style.RESET_ALL)
+print(Fore.YELLOW + "IP list has been saved to 'ip_list.csv'." + Style.RESET_ALL)
