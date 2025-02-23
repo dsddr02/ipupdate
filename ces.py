@@ -1,4 +1,3 @@
-import csv
 import requests
 from requests_html import HTMLSession
 from colorama import Fore, Style
@@ -20,28 +19,27 @@ try:
     # 发起请求
     r = session.get(url, headers=headers)
     print(f"Status Code: {r.status_code}")
-    
+
     # 渲染网页，确保动态内容加载完毕
     r.html.render(sleep=2, keep_page=True, scrolldown=1)
 
-    # 获取IP和端口
-    for i in range(1, 51):  # 假设最多获取50个IP
+    # 获取IP地址，最多获取50个IP
+    for i in range(1, 51):
         ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
-       # port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
         
         if ip:
-           
-             ip_list.append(f"{ip}")
+            # 去掉端口，只保留IP地址
+            ip_address = ip.split(":")[0]  # 仅提取IP，去掉端口
+            ip_list.append(ip_address)
     
     print(Fore.GREEN + "IP addresses successfully retrieved!" + Style.RESET_ALL)
 
 except Exception as e:
     print(Fore.RED + f"Error occurred: {e}" + Style.RESET_ALL)
 
-with open('ip.csv', 'w', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(["IP Address"])  # 写入表头
+# 保存IP到txt文件
+with open('ip_list.txt', 'w') as txtfile:
     for ip in ip_list:
-        writer.writerow([ip])  # 写
+        txtfile.write(f"{ip}\n")  # 每个IP写入新的一行
 
-print(Fore.YELLOW + "Valid IP list has been completed." + Style.RESET_ALL)
+print(Fore.YELLOW + "IP list has been saved to 'ip_list.txt'." + Style.RESET_ALL)
