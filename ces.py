@@ -25,7 +25,7 @@ try:
 
     # 获取IP地址，最多获取50个IP
     for i in range(1, 51):
-        ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True)
+        ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
         
         if ip:
             # 去掉端口，只保留IP地址
