@@ -27,13 +27,11 @@ try:
     # 获取IP和端口
     for i in range(1, 51):  # 假设最多获取50个IP
         ip = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[1]', first=True).text
-        port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
+       # port = r.html.xpath(f'//*[@id="proxylist_table"]/tr[{i}]/td[2]', first=True).text
         
         if ip:
-            # 如果端口是SOCKS类型的代理，则跳过
-            if 'SOCK' not in port:
-                # 拼接IP和端口，添加到列表
-                ip_list.append(f"{port.lower()}://{ip}")
+           
+             ip_list.append(f"{ip}")
     
     print(Fore.GREEN + "IP addresses successfully retrieved!" + Style.RESET_ALL)
 
