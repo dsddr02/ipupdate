@@ -17,6 +17,8 @@ if response.status_code == 200:
     
     # Open a file in write mode to save the IP addresses
     with open("valid_ips.txt", "w") as file:
+        count = 1  # Initialize counter for numbering IPs
+        
         # Loop through all the rows in the table (except the header)
         for row in table.find_all('tr')[1:]:
             # Find all the cells in the current row
@@ -30,8 +32,9 @@ if response.status_code == 200:
                 
                 # If speed is not "0.00MB/s", write the IP to the file
                 if speed != "0.00MB/s":
-                    file.write(ip + "\n")
-                    
+                    file.write(f"{ip}#火狐{count}\n")
+                    count += 1  # Increment the counter
+    
     print("Valid IPs have been written to 'valid_ips.txt'.")
 else:
     print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
