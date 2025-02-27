@@ -34,7 +34,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add valid_ips.txt
             git commit -m "Automatic update"
-            git push
+            git push --force origin main
           else
            echo "No changes detected, skipping commit."
           fi
