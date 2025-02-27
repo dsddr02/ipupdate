@@ -1,0 +1,110 @@
+name: 执行 CloudflareCDN 裂变脚本
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  Run_Fission:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码仓库
+      uses: actions/checkout@v2
+
+    - name: 设置 Python 环境
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: 安装依赖
+      run: pip install -r requirements.txt
+      
+    - name: 安装依赖
+      run: pip install geoip2
+
+    - name: 运行裂变脚本
+      run: python Fission.py
+
+    - name: 去重及清理空行
+      run: |
+        awk '!seen[$0]++' Fission_domain.txt | sed '/^$/d' | sort > temp_domain.txt && mv temp_domain.txt Fission_domain.txt
+        awk '!seen[$0]++' Fission_ip.txt | sed '/^$/d' | sort > temp_ip.txt
+
+    - name: 安装 mmdb-bin 工具
+      run: sudo apt-get install -y mmdb-bin wget
+
+    - name: 下载 GeoLite.mmdb 数据库
+      run: |
+        wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb -O GeoLite2-ASN.mmdb
+        wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb -O GeoLite2-Country.mmdb
+
+    - name: IP 地址分类
+      run: |
+        > Fission_ip.txt
+        > Fission_cf.txt
+        while IFS= read -r line; do
+          ip=$(echo "$line" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+          if [ -n "$ip" ]; then
+            ASN=$(mmdblookup --file GeoLite2-ASN.mmdb --ip "$ip" autonomous_system_number | grep -oP '\d+' || true)
+            if [ -n "$ASN" ]; then
+              if echo "$ASN" | grep -qE '13335|209242'; then
+                echo "$line" >> Fission_cf.txt
+              else
+                echo "$line" >> Fission_ip.txt
+              fi
+            else
+              echo "ASN 查询失败，IP: $ip" >&2
+            fi
+          fi
+        done < temp_ip.txt
+
+    - name: 生成 IP 地址对应国家代码
+      run: |
+          > Fission_ip2cc.txt
+          while IFS= read -r line
+          do
+            ip=$(echo "$line" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+            country_code=$(mmdblookup --file GeoLite2-Country.mmdb --ip "$ip" country iso_code | awk -F'"' '{print $2}' | tr -d '\n')
+            echo "$line#$country_code" >> Fission_ip2cc.txt
+          done < Fission_ip.txt
+
+    - name: 分离域名文件
+      run: |
+        > Fission_domain_http.txt
+        > Fission_domain_https.txt
+        while IFS= read -r line; do
+          if echo "$line" | grep -qE "80\.|8080|8880|2052|2082|2086|2095"; then
+            echo "$line" >> Fission_domain_http.txt
+          else
+            echo "$line" >> Fission_domain_https.txt
+          fi
+        done < Fission_domain.txt
+
+    - name: 删除CN GB US的ip
+      run: |
+         while IFS= read -r line
+         do
+            if [[ ! $line == *"#CN" && ! $line == *"#GB" && ! $line == *"#US"* ]]; then
+              echo "${line%%#*}" >> temp_file2.txt
+              echo "$line" >> temp_file.txt
+            fi
+         done < Fission_ip2cc.txt
+
+          # 将临时文件内容写回原文件，并清空临时文件内容
+         mv temp_file.txt Fission_ip2cc.txt
+         mv temp_file2.txt Fission_ip.txt
+          > temp_file.txt
+          > temp_file2.txt
+
+    - name: 提交并推送更改
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Fission_cf.txt Fission_ip.txt Fission_ip2cc.txt Fission_domain.txt Fission_domain_http.txt Fission_domain_https.txt
+        git commit -m "🚀 更新完成于 $(date "+%Y/%m/%d %H:%M:%S")"
+        git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{github.repository}}.git
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
