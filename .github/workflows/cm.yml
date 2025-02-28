@@ -36,7 +36,7 @@ jobs:
         set -e
         ./CloudflareST -t 8 -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -tlr 0 -url $TEST_URL -o HKG.csv
         rm -f ip.txt
-        python puss.py
+        python xn.py
 
     - name: Commit changes
       run: |
