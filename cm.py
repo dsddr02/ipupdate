@@ -16,7 +16,7 @@ if response.status_code == 200:
     table = soup.find('table')
     
     # Open a file in write mode to save the IP addresses
-    with open("valid_ips.txt", "w") as file:
+    with open("ip.txt", "w") as file:
         count = 1  # Initialize counter for numbering IPs
         
         # Loop through all the rows in the table (except the header)
@@ -37,6 +37,6 @@ if response.status_code == 200:
                     file.write(f"{ip}\n")
                    # count += 1  # Increment the counter
     
-    print("Valid IPs have been written to 'valid_ips.txt'.")
+    print("Valid IPs have been written to 'ip.txt'.")
 else:
     print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
