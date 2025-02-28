@@ -10,4 +10,4 @@ def csv_to_txt(csv_filename, output_filename, area_name):
         for i, (ip, speed) in enumerate(zip(ips, download_speeds)):
             f.write(f"{ip}:8443#{area_name} {i+1}\n")
 
-csv_to_txt("HKG.csv", "valid_ips.txt", "xien")
+csv_to_txt("HKG.csv", "valid_ips.txt", "xn")
