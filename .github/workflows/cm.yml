@@ -36,7 +36,7 @@ jobs:
     - name: 测速
       run: |
           set -e
-          ./CloudflareST -t 8 -sl 5 -n 100 -dn 15 -dt 4 -tp 8443 -tlr 0 -url https://cdn.cloudflare.steamstatic.com/steam/apps/256843155/movie_max.mp4 -o HKG.csv
+          ./CloudflareST -t 8 -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -tlr 0 -url https://cs.uu333.us.kg -o HKG.csv
        
           rm -f ip.txt
     - name: Commit changes
