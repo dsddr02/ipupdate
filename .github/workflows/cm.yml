@@ -27,12 +27,24 @@ jobs:
         
     - name: Run script
       run: python ${{ github.workspace }}/cm.py
+    - name: Make script executable and install dependencies
+      run: |
+          set -e
+          chmod +x CloudflareST
+          pip install pandas
+
+    - name: 测速
+      run: |
+          set -e
+          ./CloudflareST -t 8 -sl 5 -n 100 -dn 15 -dt 4 -tp 8443 -tlr 0 -o HKG.csv
+       
+          rm -f ip.txt
     - name: Commit changes
       run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           if [ -n "$(git status --porcelain)" ]; then
-            git add valid_ips.txt
+            git add HKG.csv
             git commit -m "Automatic update"
             git push --force origin main
           else
