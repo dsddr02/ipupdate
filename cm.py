@@ -33,8 +33,9 @@ if response.status_code == 200:
                 # If speed is not "0.00MB/s", write the IP to the file
               #  if speed != "0.00MB/s":
                 if speed == "移动":
-                    file.write(f"{ip}:8443#CM大佬{count}\n")
-                    count += 1  # Increment the counter
+                   # file.write(f"{ip}:8443#CM大佬{count}\n")
+                    file.write(f"{ip}\n")
+                   # count += 1  # Increment the counter
     
     print("Valid IPs have been written to 'valid_ips.txt'.")
 else:
