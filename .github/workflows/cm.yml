@@ -31,7 +31,7 @@ jobs:
 
     - name: 测速
       env:
-        TEST_URL: ${{ vars.TEST_URL }}  # 如果是敏感数据，使用 secrets.TEST_URL
+        TEST_URL: ${{ secrets.TEST_URL }}  # 如果是敏感数据，使用 secrets.TEST_URL
       run: |
         set -e
         ./CloudflareST -t 8 -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -tlr 0 -url $TEST_URL -o HKG.csv
