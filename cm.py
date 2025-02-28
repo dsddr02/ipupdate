@@ -28,12 +28,12 @@ if response.status_code == 200:
             if len(cells) > 4:
                 # Extract the IP address and speed
                 ip = cells[1].text.strip()
-                speed = cells[4].text.strip()
+                speed = cells[0].text.strip()
                 
                 # If speed is not "0.00MB/s", write the IP to the file
               #  if speed != "0.00MB/s":
-                if speed == "0.00MB/s":
-                    file.write(f"{ip}#CM大佬{count}\n")
+                if speed == "移动":
+                    file.write(f"{ip}:8443#CM大佬{count}\n")
                     count += 1  # Increment the counter
     
     print("Valid IPs have been written to 'valid_ips.txt'.")
