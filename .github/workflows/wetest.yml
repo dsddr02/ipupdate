@@ -24,6 +24,7 @@ jobs:
         pip install requests
         pip install beautifulsoup4     
         pip install selenium webdriver-manager
+        pip install pandas
 
         
     - name: Run script
