@@ -13,10 +13,17 @@ try:
     response.raise_for_status()  # 确保请求成功
     
     # 获取原始文本内容
-    original_text = response.text
+    original_lines = response.text.splitlines()  # 按行分割文本
 
-    # 使用正则表达式进行批量替换
-    modified_text = re.sub(r"\|\|([a-zA-Z0-9.-]+)\^", r"DOMAIN-SUFFIX,\1", original_text)
+    # 过滤掉以 "!" 或 "/" 开头的行，并进行替换
+    modified_lines = [
+        re.sub(r"\|\|([a-zA-Z0-9.-]+)\^", r"DOMAIN-SUFFIX,\1", line)
+        for line in original_lines
+        if not line.startswith("!") and not line.startswith("/")
+    ]
+
+    # 重新拼接文本
+    modified_text = "\n".join(modified_lines)
 
     # 将修改后的内容保存到 .list 文件
     with open(filename, "w", encoding="utf-8") as file:
