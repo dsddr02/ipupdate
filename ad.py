@@ -13,13 +13,12 @@ try:
     response.raise_for_status()  # 确保请求成功
     
     # 获取原始文本内容
-    original_lines = response.text.splitlines()  # 按行分割文本
+    original_lines = response.text.splitlines()  # 按行拆分文本
 
-    # 过滤掉以 "!" 或 "/" 开头的行，并进行替换
+    # 仅保留 "||域名^" 形式的行，并进行替换
     modified_lines = [
         re.sub(r"\|\|([a-zA-Z0-9.-]+)\^", r"DOMAIN-SUFFIX,\1", line)
-        for line in original_lines
-        if not line.startswith("!") and not line.startswith("/")
+        for line in original_lines if line.startswith("||") and line.endswith("^")
     ]
 
     # 重新拼接文本
