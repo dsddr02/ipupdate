@@ -1,8 +1,8 @@
-name: Update ipdb
+name: Update AD
 
 on:
   schedule:
-    - cron: '3 */2 * * *' # 每3小时运行一次
+    - cron: '3 15 * * *' # 每3小时运行一次
   workflow_dispatch: # 允许手动触发
   #push: # 允许提交触发
 
