@@ -3,7 +3,7 @@ import requests
 # EasyList 广告服务器列表 URL
 EASYLIST_URL = "https://raw.githubusercontent.com/easylist/easylist/refs/heads/master/easylist/easylist_adservers.txt"
 
-# 目标文件路径（`.list` 格式）
+# 目标文件路径
 OUTPUT_FILE = "adblock.list"
 
 def download_easylist(url):
@@ -31,9 +31,11 @@ def parse_easylist(lines):
     return domains
 
 def save_to_list(domains, filename):
-    """ 保存域名到 `.list` 文件 """
+    """ 生成 Clash 兼容的 `.list` 文件 """
     with open(filename, "w", encoding="utf-8") as file:
-        file.write("\n".join(sorted(domains)))
+        file.write("payload:\n")
+        for domain in sorted(domains):
+            file.write(f"  - '+.{domain}'\n")
     print(f"已保存 {len(domains)} 个广告域名到 {filename}")
 
 def main():
