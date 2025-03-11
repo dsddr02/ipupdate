@@ -27,13 +27,13 @@ jobs:
 
         
     - name: Run script
-      run: python ${{ github.workspace }}/ad.py
+      run: python ${{ github.workspace }}/ad1.py
     - name: Commit changes
       run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           if [ -n "$(git status --porcelain)" ]; then
-            git add adblock.list
+            git add adblock.mrs
             git commit -m "Automatic update"
             git push
           else
