@@ -1,0 +1,55 @@
+name: Update cm
+
+on:
+  schedule:
+    - cron: '37 */4 * * *' # 每12小时运行一次
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+
+  update-ip-list:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 pandas  
+
+
+    - name: Make script executable
+      run: chmod +x CloudflareST
+
+    - name: 测速
+      env:
+        TEST_URL: ${{ secrets.TEST_URL }}  # 如果是敏感数据，使用 secrets.TEST_URL
+      run: |
+        set -e
+        ./CloudflareST -f iphome.txt -t 8 -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -tlr 0 -url $TEST_URL -o HKG.csv
+        #rm -f ip.txt
+        python xn.py
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        if [ -n "$(git status --porcelain)" ]; then
+          git add ip.txt valid_ips.txt
+          git commit -m "update home"
+          git push --force origin main
+        else
+          echo "No changes detected, skipping commit."
+        fi
+          
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
