@@ -2,7 +2,7 @@ import requests
 import re
 
 EASYLIST_URL = "https://raw.githubusercontent.com/easylist/easylist/refs/heads/master/easylist/easylist_adservers.txt"
-OUTPUT_FILE = "adblock.mrs"
+OUTPUT_FILE = "adblock.list"
 
 def download_easylist(url):
     """下载 EasyList 广告域名列表"""
@@ -12,11 +12,9 @@ def download_easylist(url):
 
 def is_valid_domain(domain):
     """检查是否为合法域名（避免 Mihomo 解析错误）"""
-    # 过滤 IP 地址
-    if re.match(r"^\d+\.\d+\.\d+\.\d+$", domain):
+    if re.match(r"^\d+\.\d+\.\d+\.\d+$", domain):  # 过滤 IP
         return False
-    # 过滤非法域名（结尾 `.` 或者不包含字母）
-    if domain.endswith(".") or not re.search(r"[a-zA-Z]", domain):
+    if domain.endswith(".") or not re.search(r"[a-zA-Z]", domain):  # 过滤无效域名
         return False
     return True
 
@@ -36,24 +34,22 @@ def parse_easylist(lines):
         else:
             continue
 
-        # 只保留合法域名
         if is_valid_domain(domain):
             domains.add(domain)
     
     return domains
 
-def save_to_mrs(domains, filename):
-    """保存到 Mihomo 规则文件"""
+def save_to_list(domains, filename):
+    """保存为 .list 文件"""
     with open(filename, "w", encoding="utf-8") as file:
-        file.write("payload:\n")
         for domain in sorted(domains):
-            file.write(f"  - '+.{domain}'\n")
+            file.write(f"+.{domain}\n")
     print(f"✅ 已保存 {len(domains)} 个广告域名到 {filename}")
 
 def main():
     lines = download_easylist(EASYLIST_URL)
     domains = parse_easylist(lines)
-    save_to_mrs(domains, OUTPUT_FILE)
+    save_to_list(domains, OUTPUT_FILE)
 
 if __name__ == "__main__":
     main()
