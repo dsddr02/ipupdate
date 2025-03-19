@@ -2,7 +2,7 @@ name: Update iphome
 
 on:
   schedule:
-    - cron: '37 */4 * * *' # 每12小时运行一次
+    - cron: '37 3 * * *' # 每12小时运行一次
   workflow_dispatch: # 允许手动触发
 
 jobs:
