@@ -43,7 +43,8 @@ def save_to_list(domains, filename):
     """保存为 .list 文件"""
     with open(filename, "w", encoding="utf-8") as file:
         for domain in sorted(domains):
-            file.write(f"+.{domain}\n")
+           # file.write(f"+.{domain}\n")
+            file.write(f"domain:{domain}\n")
     print(f"✅ 已保存 {len(domains)} 个广告域名到 {filename}")
 
 def main():
