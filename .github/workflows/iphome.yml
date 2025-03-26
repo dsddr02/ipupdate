@@ -2,7 +2,7 @@ name: Update iphome
 
 on:
   schedule:
-    - cron: '37 3 * * *' # 每12小时运行一次
+    - cron: '37 */10 * * *' # 每12小时运行一次
   workflow_dispatch: # 允许手动触发
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
         TEST_URL: ${{ secrets.TEST_URL }}  # 如果是敏感数据，使用 secrets.TEST_URL
       run: |
         set -e
-        ./CloudflareST -f iphome.txt -t 8 -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -url $TEST_URL -tlr 0 -o HKG.csv
+        ./CloudflareST -f iphome.txt -t 8 -cfcolo HKG -sl 1 -n 300 -dn 15 -dt 10 -tp 8443 -url $TEST_URL -tlr 0 -o HKG.csv
         #rm -f ip.txt
         python xn.py
 
